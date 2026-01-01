@@ -16,7 +16,7 @@ export const TaskProvider = ({ children }) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
-      const { data } = await axios.get('http://localhost:5000/api/tasks', {
+      const { data } = await axios.get('https://medify-api.onrender.com/api/tasks', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTasks(data);
@@ -31,7 +31,7 @@ export const TaskProvider = ({ children }) => {
   const addTask = async (taskData) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/tasks', taskData, {
+      await axios.post('https://medify-api.onrender.com/api/tasks', taskData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('Task Added!');
@@ -45,7 +45,7 @@ export const TaskProvider = ({ children }) => {
   const updateTask = async (id, updatedData) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/tasks/${id}`, updatedData, {
+      await axios.put(`https://medify-api.onrender.com/api/tasks/${id}`, updatedData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('Task Updated!');
@@ -60,7 +60,7 @@ export const TaskProvider = ({ children }) => {
     if(!window.confirm("Are you sure?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
+      await axios.delete(`https://medify-api.onrender.com/api/tasks/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('Task Deleted');

@@ -13,7 +13,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       // 1. Connect to Backend Login API
-      const { data } = await axios.post('http://localhost:5000/api/auth/login', {
+      const { data } = await axios.post('https://medify-api.onrender.com/api/auth/login', {
         email,
         password,
       });

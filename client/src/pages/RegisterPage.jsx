@@ -12,7 +12,7 @@ const RegisterPage = () => {
     e.preventDefault();
     try {
       // Connect to Backend
-      await axios.post('http://localhost:5000/api/auth/register', formData);
+      await axios.post('https://medify-api.onrender.com/api/auth/register', formData);
       toast.success('Registration Successful! Please Login.');
       navigate('/'); // Go to Login Page
     } catch (error) {
