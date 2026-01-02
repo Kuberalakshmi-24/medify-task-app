@@ -26,3 +26,24 @@
 ## 🛠️ Tech Stack used
 * MERN Stack (MongoDB, Express, React, Node)
 * Tailwind CSS
+---
+
+## 🚀 How to Run Locally
+
+If you want to run this project on your local machine, follow these steps:
+
+### 1. Clone the Repository
+```bash
+git clone [https://github.com/Kuberalakshmi-24/medify-task-app.git](https://github.com/Kuberalakshmi-24/medify-task-app.git)
+cd medify-task-app
+cd client
+npm install
+npm run dev
+cd server
+npm install
+npm run server
+👤 Author
+
+Kuberalakshmi K Final Year B.E. CSE (Data Science)
+
+Annamalai University
