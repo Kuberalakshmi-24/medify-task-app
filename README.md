@@ -7,6 +7,13 @@
 
 ---
 
+👤 Author
+
+Kuberalakshmi K Final Year B.E. CSE (Data Science)
+
+Annamalai University
+
+
 ## 📸 Screenshots
 
 ### 1. Login Page
@@ -36,14 +43,16 @@ If you want to run this project on your local machine, follow these steps:
 ```bash
 git clone [https://github.com/Kuberalakshmi-24/medify-task-app.git](https://github.com/Kuberalakshmi-24/medify-task-app.git)
 cd medify-task-app
+
+Install Dependencies (Client)
 cd client
 npm install
 npm run dev
+
+Setup Backend
+
+(Make sure you have your backend .env file ready)
 cd server
 npm install
 npm run server
-👤 Author
 
-Kuberalakshmi K Final Year B.E. CSE (Data Science)
-
-Annamalai University
