@@ -1,6 +1,17 @@
 # 🚀 MedifyTask - Smart Task Management App
 
 **MedifyTask** is a modern, responsive task management application.
+---
+
+## ✨ Key Features
+
+* **🔐 User Authentication:** Secure Login and Registration page.
+* **📊 Interactive Dashboard:** Visual analytics of task status (Pending, Completed).
+* **✅ Task Management:** Easy to Add, Edit, and Delete tasks.
+* **📱 Fully Responsive:** Works perfectly on Mobile, Tablet, and Desktop.
+* **🎨 Modern UI:** Built with Tailwind CSS for a clean look.
+
+---
 
 🔗 **Live Frontend:** [Click Here](https://medify-task-app.vercel.app)
 🔗 **Live Backend:** [Click Here](https://medify-api.onrender.com)
