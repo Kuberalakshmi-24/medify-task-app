@@ -1,81 +1,77 @@
 // client/src/context/TaskContext.jsx
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext } from 'react';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
 
-const TaskContext = createContext();
+// 1. Create Context
+export const TaskContext = createContext();
 
+// 2. Custom Hook
 export const useTasks = () => useContext(TaskContext);
 
+// 3. Provider Component
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  
+  // Render Live URL
+  const API_URL = 'https://medify-api.onrender.com/api/tasks'; 
 
-  // Fetch Tasks
+  // Helper to get Token
+  const getToken = () => localStorage.getItem('token');
+
   const fetchTasks = async () => {
+    const token = getToken();
+    if (!token) return;
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-      const { data } = await axios.get('https://medify-api.onrender.com/api/tasks', {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await axios.get(API_URL, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setTasks(data);
-      setLoading(false);
+      setTasks(res.data);
     } catch (error) {
-      console.error("Error fetching tasks", error);
-      setLoading(false);
+      console.error("Error fetching tasks:", error);
     }
   };
 
-  // Add Task
+  // FIX: Accepting 'taskData' object (Title, Desc, Priority, Date)
   const addTask = async (taskData) => {
+    const token = getToken();
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('https://medify-api.onrender.com/api/tasks', taskData, {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await axios.post(API_URL, taskData, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success('Task Added!');
-      fetchTasks(); // Refresh State
+      setTasks([...tasks, res.data]); // Update UI instantly
     } catch (error) {
-      toast.error('Failed to add task');
+      console.error("Error adding task:", error);
     }
   };
 
-  // Update Task
+  // MISSING FUNCTION ADDED: Update Task
   const updateTask = async (id, updatedData) => {
+    const token = getToken();
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(`https://medify-api.onrender.com/api/tasks/${id}`, updatedData, {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await axios.put(`${API_URL}/${id}`, updatedData, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success('Task Updated!');
-      fetchTasks();
+      setTasks(tasks.map((task) => (task._id === id ? res.data : task)));
     } catch (error) {
-      toast.error('Update Failed');
+      console.error("Error updating task:", error);
     }
   };
 
-  // Delete Task
   const deleteTask = async (id) => {
-    if(!window.confirm("Are you sure?")) return;
+    const token = getToken();
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`https://medify-api.onrender.com/api/tasks/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+      await axios.delete(`${API_URL}/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success('Task Deleted');
-      fetchTasks();
+      // Handle both '_id' (MongoDB) and 'id' (Frontend) mismatch
+      setTasks(tasks.filter((task) => (task._id || task.id) !== id));
     } catch (error) {
-      toast.error('Delete Failed');
+      console.error("Error deleting task:", error);
     }
   };
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
 
   return (
-    <TaskContext.Provider value={{ tasks, loading, fetchTasks, addTask, updateTask, deleteTask }}>
+    <TaskContext.Provider value={{ tasks, fetchTasks, addTask, updateTask, deleteTask }}>
       {children}
     </TaskContext.Provider>
   );

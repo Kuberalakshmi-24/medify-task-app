@@ -1,57 +1,50 @@
-// client/src/pages/DashboardPage.jsx
-import { useEffect, useState } from 'react';
+import { useEffect, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { TaskContext } from '../context/TaskContext'; // TaskContext irukkanum
 import { useNavigate } from 'react-router-dom';
-import { useTasks } from '../context/TaskContext';
-import TaskList from '../components/TaskList';
-import TaskChart from '../components/TaskChart';
-import { LogOut, LayoutDashboard } from 'lucide-react'; // Added Icons
+import TaskList from '../components/TaskList'; // Unga component path check pannunga
+import TaskChart from '../components/TaskChart'; // Unga component path check pannunga
 
 const DashboardPage = () => {
+  const { user, logout } = useContext(AuthContext); // Use Context (Safe way)
+  const { fetchTasks } = useContext(TaskContext);
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const { fetchTasks } = useTasks();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    if (!token) { navigate('/'); } else {
-      setUser(JSON.parse(userData));
-      fetchTasks();
+    if (!user) {
+      navigate('/'); // User illana Login page-ku po
+    } else {
+      fetchTasks(); // User iruntha tasks edu
     }
-  }, [navigate]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/');
-  };
+  }, [user, navigate, fetchTasks]);
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* MODERN NAVBAR WITH GRADIENT */}
-      <nav className="bg-gradient-to-r from-blue-700 to-indigo-800 shadow-lg">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center text-white">
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <LayoutDashboard size={28} /> MedifyTask
-          </h1>
-          <div className="flex items-center gap-6">
-            <span className="font-medium opacity-90 hidden md:block">Welcome, {user?.name}</span>
-            <button onClick={handleLogout} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-all text-sm font-semibold backdrop-blur-sm">
-              <LogOut size={18} /> Logout
-            </button>
-          </div>
+      {/* Navbar */}
+      <nav className="bg-white shadow-sm p-4 flex justify-between items-center">
+        <h1 className="text-xl font-bold text-blue-600">MedifyTask</h1>
+        <div className="flex items-center gap-4">
+          <span className="text-slate-600 font-medium">Welcome, {user?.name}</span>
+          <button 
+            onClick={logout}
+            className="bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition-colors text-sm font-bold"
+          >
+            Logout
+          </button>
         </div>
       </nav>
 
-      <div className="container mx-auto px-6 py-8">
-        <h2 className="text-3xl font-extrabold text-slate-800 mb-8">Dashboard Overview</h2>
-        <div className="grid gap-8 md:grid-cols-3">
-          {/* Chart Section with Hover Effect */}
-          <div className="md:col-span-1 transition-transform hover:scale-[1.02]">
-            <TaskChart />
+      {/* Content */}
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Chart Section */}
+          <div className="md:col-span-1">
+             <TaskChart />
           </div>
+          
+          {/* List Section */}
           <div className="md:col-span-2">
-            <TaskList />
+             <TaskList />
           </div>
         </div>
       </div>
