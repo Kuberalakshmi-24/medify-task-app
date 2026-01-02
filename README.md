@@ -57,5 +57,5 @@ cd server
 npm install
 npm run server
 
-<i>Developed with ❤️ using React & MERN Stack.</i>
+Developed with ❤️ using React & MERN Stack.
 
