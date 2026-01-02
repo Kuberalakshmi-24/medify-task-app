@@ -45,14 +45,17 @@ git clone [https://github.com/Kuberalakshmi-24/medify-task-app.git](https://gith
 cd medify-task-app
 
 Install Dependencies (Client)
+
 cd client
 npm install
 npm run dev
 
 Setup Backend
-
 (Make sure you have your backend .env file ready)
+
 cd server
 npm install
 npm run server
+
+<i>Developed with ❤️ using React & MERN Stack.</i>
 
