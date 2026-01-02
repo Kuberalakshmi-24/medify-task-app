@@ -1,16 +1,51 @@
-# React + Vite
+# 🚀 MedifyTask - Smart Task Management App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**MedifyTask** is a modern, responsive task management application designed to help users organize their daily activities efficiently. It features a beautiful dashboard with real-time analytics, status tracking, and secure authentication.
 
-Currently, two official plugins are available:
+🔗 **Live Frontend:** [Click Here to View App](https://medify-task-app.vercel.app)  
+🔗 **Live Backend:** [Click Here to View API](https://medify-api.onrender.com)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🌟 Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **🔐 Secure Authentication:** User registration and login with JWT encryption.
+* **📊 Smart Dashboard:** Visual analytics with a dynamic Donut Chart showing task progress.
+* **⚡ Real-time Updates:** Add, edit, and delete tasks instantly.
+* **🔄 Status Toggle:** One-click status change (Pending ➝ In Progress ➝ Completed).
+* **🎨 Modern UI:** Built with **Tailwind CSS**, featuring gradients, glassmorphism, and responsive design.
+* **📱 Mobile Responsive:** Works perfectly on Laptops, Tablets, and Mobiles.
+* **🔔 Interactive Alerts:** Toast notifications for all user actions.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Tech Stack used
+
+* **Frontend:** React.js (Vite), Tailwind CSS, Lucide React (Icons), Axios.
+* **Backend:** Node.js, Express.js.
+* **Database:** MongoDB.
+* **Deployment:** Vercel (Frontend), Render (Backend).
+
+---
+
+## 📸 Screenshots
+
+### 1. Login Page
+*(Add your Login Page screenshot here)*
+
+### 2. Dashboard & Analytics
+*(Add your Dashboard screenshot here)*
+
+### 3. Add Task & Management
+*(Add your Add Task Modal screenshot here)*
+
+---
+
+## 🚀 How to Run Locally
+
+If you want to run this project on your local machine, follow these steps:
+
+### 1. Clone the Repository
+```bash
+git clone [https://github.com/Kuberalakshmi-24/medify-task-app.git](https://github.com/Kuberalakshmi-24/medify-task-app.git)
+cd medify-task-app
