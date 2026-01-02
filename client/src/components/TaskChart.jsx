@@ -1,39 +1,79 @@
 // client/src/components/TaskChart.jsx
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut } from 'react-chartjs-2';
-import { useTasks } from '../context/TaskContext';
-import { PieChart } from 'lucide-react';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { useContext } from 'react';
+import { TaskContext } from '../context/TaskContext';
 
 const TaskChart = () => {
-  const { tasks } = useTasks();
-  const pending = tasks.filter(t => t.status === 'Pending').length;
-  const inProgress = tasks.filter(t => t.status === 'In Progress').length;
-  const completed = tasks.filter(t => t.status === 'Completed').length;
+  const { tasks } = useContext(TaskContext);
 
-  const data = {
-    labels: ['Pending', 'In Progress', 'Completed'],
-    datasets: [{
-      label: '# of Tasks', data: [pending, inProgress, completed],
-      backgroundColor: ['#F59E0B', '#3B82F6', '#10B981'],
-      borderColor: ['#ffffff', '#ffffff', '#ffffff'], borderWidth: 3, hoverOffset: 10
-    }],
-  };
+  // 1. Calculate Stats
+  const totalTasks = tasks.length;
+  const completed = tasks.filter(task => task.status === 'Completed').length;
+  const inProgress = tasks.filter(task => task.status === 'In Progress').length;
+  const pending = tasks.filter(task => task.status === 'Pending').length;
 
-  if (tasks.length === 0) return <div className="p-6 bg-white rounded-2xl shadow-sm border border-slate-100 h-full flex items-center justify-center text-slate-500">No task data yet.</div>;
+  // 2. Handle Empty State (Zero Tasks)
+  if (totalTasks === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 h-64 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+        <p className="text-slate-400 font-medium">No tasks yet</p>
+        <p className="text-xs text-slate-400 mt-1">Add a task to see stats</p>
+      </div>
+    );
+  }
+
+  // 3. Calculate Degrees for Chart
+  const completedDeg = (completed / totalTasks) * 360;
+  const inProgressDeg = (inProgress / totalTasks) * 360;
+  // Pending takes the remaining space automatically
 
   return (
-    <div className="p-6 mb-6 bg-white rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col items-center transition-all hover:shadow-xl">
-      <h3 className="mb-6 text-xl font-extrabold text-slate-800 flex items-center gap-2">
-        <PieChart className="text-blue-600"/> Task Statistics
-      </h3>
-      <div className="w-72 h-72 relative">
-        <Doughnut data={data} options={{ cutout: '65%', plugins: { legend: { position: 'bottom', labels: { padding: 20, font: { family: 'Inter', size: 12 } } } } }} />
-        <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
-           <span className="text-4xl font-extrabold text-slate-800">{tasks.length}</span>
-           <span className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Total Tasks</span>
+    <div className="flex flex-col items-center">
+      
+      {/* CHART CIRCLE CONTAINER */}
+      <div className="relative w-48 h-48 mb-6">
+        
+        {/* The Conic Gradient Circle (Donut) */}
+        <div 
+          className="w-full h-full rounded-full shadow-lg transition-all duration-1000 ease-out"
+          style={{
+            background: `conic-gradient(
+              #10B981 0deg ${completedDeg}deg, 
+              #3B82F6 ${completedDeg}deg ${completedDeg + inProgressDeg}deg, 
+              #F59E0B ${completedDeg + inProgressDeg}deg 360deg
+            )`
+          }}
+        ></div>
+
+        {/* The White Center Circle (Hole) */}
+        <div className="absolute inset-4 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
+           {/* TEXT CENTERED PERFECTLY HERE */}
+           <span className="text-4xl font-extrabold text-slate-800 animate-pulse">{totalTasks}</span>
+           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">Total Tasks</span>
         </div>
+
+      </div>
+
+      {/* LEGEND (Bottom Labels) */}
+      <div className="grid grid-cols-3 gap-2 w-full text-center">
+        
+        <div className="flex flex-col items-center p-2 bg-emerald-50 rounded-xl border border-emerald-100">
+          <span className="w-3 h-3 bg-emerald-500 rounded-full mb-1"></span>
+          <span className="text-lg font-bold text-emerald-700">{completed}</span>
+          <span className="text-[10px] font-bold text-emerald-600 uppercase">Done</span>
+        </div>
+
+        <div className="flex flex-col items-center p-2 bg-blue-50 rounded-xl border border-blue-100">
+          <span className="w-3 h-3 bg-blue-500 rounded-full mb-1"></span>
+          <span className="text-lg font-bold text-blue-700">{inProgress}</span>
+          <span className="text-[10px] font-bold text-blue-600 uppercase">Active</span>
+        </div>
+
+        <div className="flex flex-col items-center p-2 bg-amber-50 rounded-xl border border-amber-100">
+          <span className="w-3 h-3 bg-amber-500 rounded-full mb-1"></span>
+          <span className="text-lg font-bold text-amber-700">{pending}</span>
+          <span className="text-[10px] font-bold text-amber-600 uppercase">Todo</span>
+        </div>
+
       </div>
     </div>
   );

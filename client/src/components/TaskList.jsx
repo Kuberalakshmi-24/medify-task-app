@@ -2,10 +2,10 @@
 import { useState } from 'react';
 import { useTasks } from '../context/TaskContext';
 import { Trash2, CheckCircle, Circle, Clock, Calendar, Flag, Edit2, X, Filter, PlusCircle } from 'lucide-react';
+import toast from 'react-hot-toast'; // Import Toast
 
 const TaskList = () => {
   const { tasks, addTask, updateTask, deleteTask } = useTasks();
-  // Default new task is Pending
   const [newTask, setNewTask] = useState({ title: '', description: '', status: 'Pending', priority: 'Medium', dueDate: '' });
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -14,31 +14,29 @@ const TaskList = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isEditing) { 
-      await updateTask(editId, newTask); 
-      setIsEditing(false); 
-      setEditId(null); 
-    } else { 
-      // Ensure new tasks start as Pending
-      await addTask({ ...newTask, status: 'Pending' }); 
+    try {
+      if (isEditing) { 
+        await updateTask(editId, newTask); 
+        toast.success('Task updated successfully! ✨'); // Success Popup
+        setIsEditing(false); 
+        setEditId(null); 
+      } else { 
+        await addTask({ ...newTask, status: 'Pending' }); 
+        toast.success('New task added! 🚀'); // Success Popup
+      }
+      setNewTask({ title: '', description: '', status: 'Pending', priority: 'Medium', dueDate: '' });
+    } catch (error) {
+      toast.error('Something went wrong!'); // Error Popup
     }
-    setNewTask({ title: '', description: '', status: 'Pending', priority: 'Medium', dueDate: '' });
   };
 
-  const startEdit = (task) => {
-    setNewTask({ title: task.title, description: task.description, status: task.status, priority: task.priority, dueDate: task.dueDate || '' });
-    setIsEditing(true); 
-    setEditId(task.id || task._id); 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleDelete = async (id) => {
+    if(window.confirm("Are you sure you want to delete this task?")) {
+      await deleteTask(id);
+      toast.error('Task deleted! 🗑️'); // Delete Popup
+    }
   };
 
-  const cancelEdit = () => { 
-    setIsEditing(false); 
-    setEditId(null); 
-    setNewTask({ title: '', description: '', status: 'Pending', priority: 'Medium', dueDate: '' }); 
-  };
-
-  // NEW: 3-WAY TOGGLE (Pending -> In Progress -> Completed -> Pending)
   const handleStatusToggle = (task) => { 
     let newStatus;
     if (task.status === 'Pending') newStatus = 'In Progress';
@@ -46,27 +44,27 @@ const TaskList = () => {
     else newStatus = 'Pending';
     
     updateTask(task.id || task._id, { status: newStatus }); 
+    
+    // Status Popups
+    if(newStatus === 'Completed') toast.success('Task Completed! Great Job! 🎉');
+    else if(newStatus === 'In Progress') toast('Task started! Keep going! 💪', { icon: '⏳' });
   };
 
-  const getPriorityColor = (p) => { 
-    if (p === 'High') return 'text-red-700 bg-red-50 border-red-100'; 
-    if (p === 'Medium') return 'text-amber-700 bg-amber-50 border-amber-100'; 
-    return 'text-blue-700 bg-blue-50 border-blue-100'; 
+  // ... (Rest of the code remains same - Helpers & Render) ...
+  // Helpers
+  const startEdit = (task) => {
+    setNewTask({ title: task.title, description: task.description, status: task.status, priority: task.priority, dueDate: task.dueDate || '' });
+    setIsEditing(true); setEditId(task.id || task._id); window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  // NEW: Status Colors
-  const getStatusColor = (s) => {
-    if (s === 'Completed') return 'bg-green-100 text-green-800 border-green-200';
-    if (s === 'In Progress') return 'bg-blue-100 text-blue-800 border-blue-200';
-    return 'bg-slate-100 text-slate-800 border-slate-200';
-  };
-
+  const cancelEdit = () => { setIsEditing(false); setEditId(null); setNewTask({ title: '', description: '', status: 'Pending', priority: 'Medium', dueDate: '' }); };
+  const getPriorityColor = (p) => { if (p === 'High') return 'text-red-700 bg-red-50 border-red-100'; if (p === 'Medium') return 'text-amber-700 bg-amber-50 border-amber-100'; return 'text-blue-700 bg-blue-50 border-blue-100'; };
+  const getStatusColor = (s) => { if (s === 'Completed') return 'bg-green-100 text-green-800 border-green-200'; if (s === 'In Progress') return 'bg-blue-100 text-blue-800 border-blue-200'; return 'bg-slate-100 text-slate-800 border-slate-200'; };
+  
   const filteredTasks = tasks.filter(task => {
     const statusMatch = filterStatus === 'All' || task.status === filterStatus;
     const priorityMatch = filterPriority === 'All' || task.priority === filterPriority;
     return statusMatch && priorityMatch;
   });
-
   const inputClass = "p-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none text-slate-700 bg-slate-50 focus:bg-white";
 
   return (
@@ -93,8 +91,6 @@ const TaskList = () => {
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-5">
           <input type="text" placeholder="Task Title..." required className={inputClass} value={newTask.title} onChange={(e) => setNewTask({...newTask, title: e.target.value})}/>
           <input type="text" placeholder="Description..." className={inputClass} value={newTask.description} onChange={(e) => setNewTask({...newTask, description: e.target.value})}/>
-          
-          {/* Status Dropdown visible ONLY during Edit */}
           {isEditing ? (
              <select className={inputClass} value={newTask.status} onChange={(e) => setNewTask({...newTask, status: e.target.value})}>
                <option value="Pending">Pending</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option>
@@ -104,7 +100,6 @@ const TaskList = () => {
                <option value="Low">Low</option><option value="Medium">Medium</option><option value="High">High</option>
              </select>
           )}
-
           <input type="date" className={inputClass} value={newTask.dueDate} onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}/>
           <button type="submit" className={`px-6 py-3 text-white rounded-xl font-bold shadow-md transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2 ${isEditing ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-200'}`}>
             {isEditing ? 'Update' : <>Add Task</>}
@@ -116,7 +111,6 @@ const TaskList = () => {
       <div className="grid gap-5 md:grid-cols-2">
         {filteredTasks.map((task) => (
           <div key={task._id || task.id} className={`group relative p-5 rounded-2xl bg-white shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${task.status === 'Completed' ? 'border-l-8 border-l-green-500 opacity-80' : task.status === 'In Progress' ? 'border-l-8 border-l-blue-500' : 'border-l-8 border-l-amber-500'}`}>
-            
             <div className="flex justify-between items-start">
               <div>
                 <h4 className={`text-lg font-bold ${task.status === 'Completed' ? 'text-slate-500 line-through' : 'text-slate-800'}`}>{task.title}</h4>
@@ -124,32 +118,23 @@ const TaskList = () => {
               </div>
               <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button onClick={() => startEdit(task)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all"><Edit2 size={18}/></button>
-                <button onClick={() => deleteTask(task._id || task.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all"><Trash2 size={18}/></button>
+                <button onClick={() => handleDelete(task._id || task.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all"><Trash2 size={18}/></button>
               </div>
             </div>
-
             <div className="flex items-center gap-3 mb-4 text-sm mt-2">
               <span className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 font-semibold border ${getPriorityColor(task.priority)}`}><Flag size={14}/> {task.priority}</span>
               {task.dueDate && <span className="flex items-center gap-1.5 text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-full"><Calendar size={14}/> {task.dueDate}</span>}
             </div>
-
             <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
-              <span className={`px-3 py-1 text-xs rounded-full font-bold border ${getStatusColor(task.status)}`}>
-                {task.status}
-              </span>
-              
-              {/* STATUS TOGGLE BUTTON */}
-              <button onClick={() => handleStatusToggle(task)} className="text-slate-300 hover:text-blue-600 transition-all transform hover:scale-110" title="Click to change status">
-                {task.status === 'Completed' ? <CheckCircle className="text-green-500 drop-shadow-sm" size={28}/> : 
-                 task.status === 'In Progress' ? <Clock className="text-blue-500 drop-shadow-sm" size={28}/> : 
-                 <Circle size={28}/>}
+              <span className={`px-3 py-1 text-xs rounded-full font-bold border ${getStatusColor(task.status)}`}>{task.status}</span>
+              <button onClick={() => handleStatusToggle(task)} className="text-slate-300 hover:text-blue-600 transition-all transform hover:scale-110" title="Change Status">
+                {task.status === 'Completed' ? <CheckCircle className="text-green-500 drop-shadow-sm" size={28}/> : task.status === 'In Progress' ? <Clock className="text-blue-500 drop-shadow-sm" size={28}/> : <Circle size={28}/>}
               </button>
             </div>
-
           </div>
         ))}
       </div>
-      {filteredTasks.length === 0 && <div className="text-center p-10 bg-white rounded-2xl shadow-sm border border-slate-100"><p className="text-slate-500 font-medium">No tasks found matching your filters.</p></div>}
+      {filteredTasks.length === 0 && <div className="text-center p-10 bg-white rounded-2xl shadow-sm border border-slate-100"><p className="text-slate-500 font-medium">No tasks found. Add a new task above!</p></div>}
     </div>
   );
 };
