@@ -42,7 +42,7 @@ Annamalai University
 [▶️ Click Here to Watch Video Demo] https://drive.google.com/file/d/17mhICIaed7lgaIEbaWWVez6P8yhi5evI/view?usp=sharing
 
 ## 🛠️ Tech Stack used
-* MERN Stack (MongoDB, Express, React, Node)
+* PERN Stack (Postgre SQL, Express, React, Node)
 * Tailwind CSS
 ---
 
